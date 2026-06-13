@@ -1,209 +1,153 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>배라 무드등 컨트롤러</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배라 무드등 컨트롤러 v2</title>
     <style>
-      body {
-        text-align: center;
-        font-family: sans-serif;
-        padding: 30px 15px;
-        background: #222;
-        color: #fff;
-      }
-      .card {
-        background: #333;
-        padding: 20px;
-        border-radius: 15px;
-        max-width: 400px;
-        margin: 0 auto 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      }
-      input[type="color"] {
-        width: 150px;
-        height: 150px;
-        border: none;
-        cursor: pointer;
-        border-radius: 50%;
-        background: none;
-      }
-      button {
-        padding: 12px 24px;
-        font-size: 16px;
-        margin: 10px;
-        cursor: pointer;
-        border-radius: 8px;
-        border: none;
-        font-weight: bold;
-      }
-      #connectBtn {
-        background: #007bff;
-        color: white;
-        width: 100%;
-        max-width: 200px;
-      }
-      #saveBtn {
-        background: #28a745;
-        color: white;
-      }
-      #saveBtn:disabled {
-        background: #555;
-        color: #888;
-        cursor: not-allowed;
-      }
-      .preset-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 15px;
-      }
-      .preset-item {
-        position: relative;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        transition: transform 0.1s;
-      }
-      .preset-item:active {
-        transform: scale(0.9);
-      }
-      .delete-btn {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: red;
-        color: white;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        font-size: 11px;
-        line-height: 16px;
-        text-align: center;
-        font-weight: bold;
-        cursor: pointer;
-        border: 1px solid white;
-      }
+        body { text-align: center; font-family: sans-serif; padding: 20px 10px; background: #1a1a1a; color: #fff; }
+        .card { background: #292929; padding: 20px; border-radius: 16px; max-width: 380px; margin: 0 auto 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #383838; }
+        h2 { margin-top: 0; color: #ff79c6; font-size: 20px; }
+        input[type="color"] { width: 140px; height: 140px; border: 4px solid #444; cursor: pointer; border-radius: 50%; background: none; transition: border-color 0.3s; }
+        input[type="color"]:disabled { border-color: #222; cursor: not-allowed; opacity: 0.3; }
+        button { padding: 12px 20px; font-size: 15px; margin: 8px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; transition: all 0.2s; }
+        
+        #connectBtn { background: #007bff; color: white; width: 100%; box-shadow: 0 3px 6px rgba(0,123,255,0.3); }
+        #connectBtn.connected { background: #28a745; box-shadow: 0 3px 6px rgba(40,167,69,0.3); }
+        #saveBtn { background: #ffb86c; color: #222; width: 100%; margin-top: 15px; }
+        #saveBtn:disabled { background: #444; color: #777; cursor: not-allowed; }
+        
+        .preset-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; min-height: 60px; }
+        .preset-item { position: relative; width: 55px; height: 55px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: transform 0.1s; }
+        .preset-item:active { transform: scale(0.9); }
+        .delete-btn { position: absolute; top: -6px; right: -6px; background: #ff5555; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 18px; text-align: center; font-weight: bold; cursor: pointer; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+
     <div class="card">
-      <h2>배라 무드등 제어</h2>
-      <button id="connectBtn">1. 무드등 연결</button>
+        <h2>💡 라이언 무드등 제어</h2>
+        <button id="connectBtn">블루투스 연결하기</button>
     </div>
 
     <div class="card">
-      <label style="display: block; margin-bottom: 10px; font-weight: bold"
-        >2. 스포이드 색상 선택</label
-      >
-      <input type="color" id="colorPicker" value="#ffffff" disabled />
-      <br />
-      <button id="saveBtn" disabled>⭐️ 현재 색상 저장</button>
+        <h3 style="margin-top:0; font-size:16px; color:#8be9fd;">🎨 색상 선택 (드래그)</h3>
+        <input type="color" id="colorPicker" value="#ffffff" disabled>
+        <button id="saveBtn" disabled>⭐️ 이 색상 리스트에 저장</button>
     </div>
 
     <div class="card">
-      <label style="font-weight: bold">📌 저장된 색상 리스트</label>
-      <div id="presetContainer" class="preset-container"></div>
+        <h3 style="margin-top:0; font-size:16px; color:#50fa7b;">📌 내 저장 목록</h3>
+        <div id="presetContainer" class="preset-container"></div>
     </div>
 
     <script>
-      let characteristic = null;
-      let savedColors = JSON.parse(localStorage.getItem("myMoodColors")) || [];
+        let characteristic = null;
+        let isSending = false; // 💡 패킷 전송 중복 방지 락 변수
+        let debounceTimer = null;
+        let savedColors = JSON.parse(localStorage.getItem('myMoodColors')) || [];
 
-      const connectBtn = document.getElementById("connectBtn");
-      const colorPicker = document.getElementById("colorPicker");
-      const saveBtn = document.getElementById("saveBtn");
-      const presetContainer = document.getElementById("presetContainer");
+        const connectBtn = document.getElementById('connectBtn');
+        const colorPicker = document.getElementById('colorPicker');
+        const saveBtn = document.getElementById('saveBtn');
+        const presetContainer = document.getElementById('presetContainer');
 
-      // 페이지 로드 시 기존 저장된 색상 불러오기
-      renderPresets();
+        renderPresets();
 
-      // 1. BLE 블루투스 연결
-      connectBtn.addEventListener("click", async () => {
-        try {
-          const device = await navigator.bluetooth.requestDevice({
-            filters: [{ name: "BR LAMP" }],
-            optionalServices: [0xffb0],
-          });
-          const server = await device.gatt.connect();
-          const service = await server.getPrimaryService(0xffb0);
-          characteristic = await service.getCharacteristic(0xffb2);
-
-          connectBtn.innerText = "🟢 연결됨";
-          connectBtn.style.background = "#28a745";
-          colorPicker.disabled = false;
-          saveBtn.disabled = false;
-        } catch (error) {
-          console.error(error);
-          // 유저가 취소 버튼을 누른 경우(NotFoundError)가 아닐 때만 경고창 띄우기
-          if (error.name !== "NotFoundError") {
-            alert("연결 실패: " + error);
-          }
-        }
-      });
-
-      // 2. 무드등에 [B, G, R] 패킷 쏘는 함수
-      async function sendColor(hex) {
-        if (!characteristic) return;
-        const r = parseInt(hex.substring(1, 3), 16);
-        const g = parseInt(hex.substring(3, 5), 16);
-        const b = parseInt(hex.substring(5, 7), 16);
-        const packet = new Uint8Array([b, g, r]);
-        try {
-          await characteristic.writeValue(packet);
-        } catch (e) {
-          console.error("전송 에러:", e);
-        }
-      }
-
-      // 3. 스포이드 조작 시 실시간 반영
-      colorPicker.addEventListener("input", (e) => {
-        sendColor(e.target.value);
-      });
-
-      // 4. [현재 색상 저장] 버튼 클릭 시 로직
-      saveBtn.addEventListener("click", () => {
-        const currentColor = colorPicker.value; // 현재 #RRGGBB 값
-        if (!savedColors.includes(currentColor)) {
-          savedColors.push(currentColor);
-          localStorage.setItem("myMoodColors", JSON.stringify(savedColors)); // 브라우저 DB 저장
-          renderPresets();
-        }
-      });
-
-      // 5. 저장된 프리셋 UI 그리기
-      function renderPresets() {
-        presetContainer.innerHTML = "";
-        savedColors.forEach((hex, index) => {
-          const item = document.createElement("div");
-          item.className = "preset-item";
-          item.style.backgroundColor = hex;
-
-          // 프리셋 클릭 시 무드등 색 변경 + 스포이드 위치 동기화
-          item.addEventListener("click", () => {
-            colorPicker.value = hex;
-            sendColor(hex);
-          });
-
-          // X 버튼 누르면 삭제
-          const delBtn = document.createElement("div");
-          delBtn.className = "delete-btn";
-          delBtn.innerText = "X";
-          delBtn.addEventListener("click", (e) => {
-            e.stopPropagation(); // 프리셋 클릭 이벤트 전파 방지
-            savedColors.splice(index, 1);
-            localStorage.setItem("myMoodColors", JSON.stringify(savedColors));
-            renderPresets();
-          });
-
-          item.appendChild(delBtn);
-          presetContainer.appendChild(item);
+        // 1. BLE 연결
+        connectBtn.addEventListener('click', async () => {
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'BR LAMP' }],
+                    optionalServices: [0xFFB0]
+                });
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(0xFFB0);
+                characteristic = await service.getCharacteristic(0xFFB2);
+                
+                connectBtn.innerText = "🟢 연결 완료 (작동 중)";
+                connectBtn.classList.add('connected');
+                colorPicker.disabled = false;
+                saveBtn.disabled = false;
+            } catch (error) {
+                console.error(error);
+                if (error.name !== 'NotFoundError') {
+                    alert('연결 실패: ' + error);
+                }
+            }
         });
-      }
+
+        // 2. 패킷 송신 제어 함수 (세션 병목 방지 무적 로직)
+        async function sendColor(rawHex) {
+            if (!characteristic || isSending) return; // 💡 현재 전송 중이면 들어오는 패킷 씹기(락)
+
+            isSending = true; // 락 걸기
+            let hex = rawHex.replace('#', '').toUpperCase();
+            if (hex.length !== 6) { isSending = false; return; }
+
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            const packet = new Uint8Array([b, g, r]);
+
+            try {
+                await characteristic.writeValue(packet);
+            } catch (e) {
+                console.error('전송 실패:', e);
+            } finally {
+                // 초저가 칩셋의 하드웨어 버퍼 처리 시간을 위해 30ms 후 락 해제
+                setTimeout(() => { isSending = false; }, 30); 
+            }
+        }
+
+        // 3. 스포이드 드래그 시 패킷 과부하 방지 (디바운스 50ms 적용)
+        colorPicker.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                sendColor(e.target.value);
+            }, 50); // 손가락 움직임이 0.05초 멈췄을 때만 패킷 날림
+        });
+
+        // 4. 색상 저장
+        saveBtn.addEventListener('click', () => {
+            const currentColor = colorPicker.value;
+            if (!savedColors.includes(currentColor)) {
+                savedColors.push(currentColor);
+                localStorage.setItem('myMoodColors', JSON.stringify(savedColors));
+                renderPresets();
+            }
+        });
+
+        // 5. 프리셋 리스트 렌더링 및 개별 클릭 이벤트 보정
+        function renderPresets() {
+            presetContainer.innerHTML = '';
+            savedColors.forEach((hex, index) => {
+                const item = document.createElement('div');
+                item.className = 'preset-item';
+                item.style.backgroundColor = hex;
+
+                // 프리셋 클릭 시 (강제 락 해제 후 즉시 전송)
+                item.addEventListener('click', () => {
+                    colorPicker.value = hex;
+                    isSending = false; // 클릭은 무조건 즉시 반영되도록 락 강제 해제
+                    sendColor(hex);
+                });
+
+                // 삭제 버튼
+                const delBtn = document.createElement('div');
+                delBtn.className = 'delete-btn';
+                delBtn.innerText = 'X';
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 중요: 리스트 클릭 이벤트로 전파 방지
+                    savedColors.splice(index, 1);
+                    localStorage.setItem('myMoodColors', JSON.stringify(savedColors));
+                    renderPresets();
+                });
+
+                item.appendChild(delBtn);
+                presetContainer.appendChild(item);
+            });
+        }
     </script>
-  </body>
+</body>
 </html>
