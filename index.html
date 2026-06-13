@@ -1,111 +1,219 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>배라 무드등 리모컨 v3 (Minimal)</title>
     <style>
-        body { text-align: center; font-family: sans-serif; padding: 20px 10px; background: #1a1a1a; color: #fff; }
-        .card { background: #292929; padding: 20px; border-radius: 16px; max-width: 380px; margin: 0 auto 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #383838; }
-        h2 { margin-top: 0; color: #ff79c6; font-size: 20px; }
-        h3 { margin-top: 0; font-size: 16px; color: #8be9fd; }
-        
-        button { padding: 12px 24px; font-size: 15px; margin: 6px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; transition: all 0.2s; }
-        
-        #connectBtn { background: #007bff; color: white; width: 100%; box-shadow: 0 3px 6px rgba(0,123,255,0.3); }
-        #connectBtn.connected { background: #28a745; box-shadow: 0 3px 6px rgba(40,167,69,0.3); }
+      body {
+        text-align: center;
+        font-family: sans-serif;
+        padding: 20px 10px;
+        background: #1a1a1a;
+        color: #fff;
+      }
+      .card {
+        background: #292929;
+        padding: 20px;
+        border-radius: 16px;
+        max-width: 380px;
+        margin: 0 auto 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        border: 1px solid #383838;
+      }
+      h2 {
+        margin-top: 0;
+        color: #ff79c6;
+        font-size: 20px;
+      }
+      h3 {
+        margin-top: 0;
+        font-size: 16px;
+        color: #8be9fd;
+      }
 
-        .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; }
-        .color-btn { height: 50px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
-        .color-btn:active { transform: scale(0.95); }
-        .color-btn.active { border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.5); }
+      button {
+        padding: 12px 24px;
+        font-size: 15px;
+        margin: 6px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        transition: all 0.2s;
+      }
+
+      #connectBtn {
+        background: #007bff;
+        color: white;
+        width: 100%;
+        box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+      }
+      #connectBtn.connected {
+        background: #28a745;
+        box-shadow: 0 3px 6px rgba(40, 167, 69, 0.3);
+      }
+
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 15px 0;
+      }
+      .color-btn {
+        height: 50px;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.1s;
+      }
+      .color-btn:active {
+        transform: scale(0.95);
+      }
+      .color-btn.active {
+        border-color: #fff;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="card">
-        <h2>💡 라이언 무드등 제어</h2>
-        <button id="connectBtn">블루투스 연결하기</button>
+      <h2>💡 라이언 무드등 제어</h2>
+      <button id="connectBtn">블루투스 연결하기</button>
     </div>
 
     <div class="card">
-        <h3>🎨 기본 색상 선택</h3>
-        <div class="color-grid">
-            <button class="color-btn" data-hex="#FFFFFF" style="background:#ffffff; color:#000;">흰색</button>
-            <button class="color-btn" data-hex="#FF0000" style="background:#ff5555; color:#fff;">빨강</button>
-            <button class="color-btn" data-hex="#00FF00" style="background:#50fa7b; color:#000;">초록</button>
-            <button class="color-btn" data-hex="#0000FF" style="background:#8be9fd; color:#000;">파랑</button>
-            <button class="color-btn" data-hex="#FFFF00" style="background:#f1fa8c; color:#000;">노랑</button>
-            <button class="color-btn" data-hex="#FF00FF" style="background:#ff79c6; color:#fff;">분홍</button>
-        </div>
-        <button class="color-btn" data-hex="#000000" style="background:#111; color:#ff5555; width:100%; border: 1px solid #444;">🔌 전원 끄기</button>
+      <h3>🎨 기본 색상 선택</h3>
+      <div class="color-grid">
+        <button
+          class="color-btn"
+          data-hex="#FFFFFF"
+          style="background: #ffffff; color: #000"
+        >
+          흰색
+        </button>
+        <button
+          class="color-btn"
+          data-hex="#FF0000"
+          style="background: #ff5555; color: #fff"
+        >
+          빨강
+        </button>
+        <button
+          class="color-btn"
+          data-hex="#00FF00"
+          style="background: #50fa7b; color: #000"
+        >
+          초록
+        </button>
+        <button
+          class="color-btn"
+          data-hex="#0000FF"
+          style="background: #8be9fd; color: #000"
+        >
+          파랑
+        </button>
+        <button
+          class="color-btn"
+          data-hex="#FFFF00"
+          style="background: #f1fa8c; color: #000"
+        >
+          노랑
+        </button>
+        <button
+          class="color-btn"
+          data-hex="#FF00FF"
+          style="background: #ff79c6; color: #fff"
+        >
+          분홍
+        </button>
+      </div>
+      <button
+        class="color-btn"
+        data-hex="#000000"
+        style="
+          background: #111;
+          color: #ff5555;
+          width: 100%;
+          border: 1px solid #444;
+        "
+      >
+        🔌 전원 끄기
+      </button>
     </div>
 
     <script>
-        let characteristic = null;
-        const connectBtn = document.getElementById('connectBtn');
-        const colorButtons = document.querySelectorAll('.color-grid .color-btn, [data-hex="#000000"]');
+      let characteristic = null;
+      const connectBtn = document.getElementById("connectBtn");
+      const colorButtons = document.querySelectorAll(
+        '.color-grid .color-btn, [data-hex="#000000"]',
+      );
 
-        // 1. BLE 연결
-        connectBtn.addEventListener('click', async () => {
-            try {
-                const device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: 'BR_LAMP' }, { name: 'BR LAMP' }],
-                    optionalServices: [0xFFB0]
-                });
-                const server = await device.gatt.connect();
-                const service = await server.getPrimaryService(0xFFB0);
-                characteristic = await service.getCharacteristic(0xFFB2);
-                
-                connectBtn.innerText = "🟢 연결 완료";
-                connectBtn.classList.add('connected');
-            } catch (error) {
-                console.error(error);
-                if (error.name !== 'NotFoundError') {
-                    alert('연결 실패: ' + error);
-                }
-            }
-        });
+      // 1. BLE 연결 (필터 해제 무적 버전)
+      connectBtn.addEventListener("click", async () => {
+        try {
+          // 💡 특정 이름을 검사하지 않고 주변의 모든 BLE 기기를 무조건 리스트에 표시
+          const device = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [0xffb0], // 연결 후 제어에 필요한 서비스는 그대로 명시
+          });
 
-        // 2. 패킷 송신 함수 (G, B, R 고정 배열)
-        async function sendColor(rawHex) {
-            if (!characteristic) return;
+          const server = await device.gatt.connect();
+          const service = await server.getPrimaryService(0xffb0);
+          characteristic = await service.getCharacteristic(0xffb2);
 
-            let hex = rawHex.replace('#', '').toUpperCase();
-            if (hex.length !== 6) return;
-
-            const r = parseInt(hex.substring(0, 2), 16);
-            const g = parseInt(hex.substring(2, 4), 16);
-            const b = parseInt(hex.substring(4, 6), 16);
-            
-            const packet = new Uint8Array([g, b, r]);
-
-            try {
-                await characteristic.writeValue(packet);
-                updateActiveButton(rawHex);
-            } catch (e) {
-                console.error('전송 실패:', e);
-            }
+          connectBtn.innerText = "🟢 연결 완료";
+          connectBtn.classList.add("connected");
+        } catch (error) {
+          console.error(error);
+          if (error.name !== "NotFoundError") {
+            alert("연결 실패: " + error);
+          }
         }
+      });
 
-        // 3. 버튼 클릭 시 색상 즉시 변경
-        colorButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const hex = btn.getAttribute('data-hex');
-                sendColor(hex);
-            });
-        });
+      // 2. 패킷 송신 함수 (G, B, R 고정 배열)
+      async function sendColor(rawHex) {
+        if (!characteristic) return;
 
-        // 현재 선택된 버튼 테두리 강조 효과
-        function updateActiveButton(hex) {
-            colorButtons.forEach(btn => {
-                if(btn.getAttribute('data-hex') === hex) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
+        let hex = rawHex.replace("#", "").toUpperCase();
+        if (hex.length !== 6) return;
+
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+
+        const packet = new Uint8Array([g, b, r]);
+
+        try {
+          await characteristic.writeValue(packet);
+          updateActiveButton(rawHex);
+        } catch (e) {
+          console.error("전송 실패:", e);
         }
+      }
+
+      // 3. 버튼 클릭 시 색상 즉시 변경
+      colorButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const hex = btn.getAttribute("data-hex");
+          sendColor(hex);
+        });
+      });
+
+      // 현재 선택된 버튼 테두리 강조 효과
+      function updateActiveButton(hex) {
+        colorButtons.forEach((btn) => {
+          if (btn.getAttribute("data-hex") === hex) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+      }
     </script>
-</body>
+  </body>
 </html>
