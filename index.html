@@ -3,32 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>배라 무드등 리모컨 v3</title>
+    <title>배라 무드등 리모컨 v3 (Minimal)</title>
     <style>
         body { text-align: center; font-family: sans-serif; padding: 20px 10px; background: #1a1a1a; color: #fff; }
         .card { background: #292929; padding: 20px; border-radius: 16px; max-width: 380px; margin: 0 auto 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #383838; }
         h2 { margin-top: 0; color: #ff79c6; font-size: 20px; }
         h3 { margin-top: 0; font-size: 16px; color: #8be9fd; }
         
-        /* 공통 버튼 스타일 */
-        button { padding: 12px 20px; font-size: 15px; margin: 6px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; transition: all 0.2s; }
+        button { padding: 12px 24px; font-size: 15px; margin: 6px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; transition: all 0.2s; }
         
         #connectBtn { background: #007bff; color: white; width: 100%; box-shadow: 0 3px 6px rgba(0,123,255,0.3); }
         #connectBtn.connected { background: #28a745; box-shadow: 0 3px 6px rgba(40,167,69,0.3); }
-        #addPresetBtn { background: #ffb86c; color: #222; width: 100%; margin-top: 15px; }
-        #addPresetBtn:disabled { background: #444; color: #777; cursor: not-allowed; }
 
-        /* 💡 6개 기본 색상 팰럿 그리드 레이아웃 */
         .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; }
         .color-btn { height: 50px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
         .color-btn:active { transform: scale(0.95); }
         .color-btn.active { border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.5); }
-        
-        /* 저장 목록 프리셋 스타일 */
-        .preset-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; min-height: 60px; }
-        .preset-item { position: relative; width: 55px; height: 55px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: transform 0.1s; }
-        .preset-item:active { transform: scale(0.9); }
-        .delete-btn { position: absolute; top: -6px; right: -6px; background: #ff5555; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 18px; text-align: center; font-weight: bold; cursor: pointer; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -49,32 +39,18 @@
             <button class="color-btn" data-hex="#FF00FF" style="background:#ff79c6; color:#fff;">분홍</button>
         </div>
         <button class="color-btn" data-hex="#000000" style="background:#111; color:#ff5555; width:100%; border: 1px solid #444;">🔌 전원 끄기</button>
-        
-        <button id="addPresetBtn" disabled>⭐️ 현재 색상을 내 목록에 저장</button>
-    </div>
-
-    <div class="card">
-        <h3 style="color:#50fa7b;">📌 내 저장 목록 (프리셋)</h3>
-        <div id="presetContainer" class="preset-container"></div>
     </div>
 
     <script>
         let characteristic = null;
-        let selectedColor = "#FFFFFF"; // 현재 선택된 색상 트래킹 변수
-        let savedColors = JSON.parse(localStorage.getItem('myMoodColors')) || [];
-
         const connectBtn = document.getElementById('connectBtn');
-        const addPresetBtn = document.getElementById('addPresetBtn');
-        const presetContainer = document.getElementById('presetContainer');
         const colorButtons = document.querySelectorAll('.color-grid .color-btn, [data-hex="#000000"]');
-
-        renderPresets();
 
         // 1. BLE 연결
         connectBtn.addEventListener('click', async () => {
             try {
                 const device = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: 'BR_LAMP' }, { name: 'BR LAMP' }], // 공백 유무 둘 다 대응
+                    filters: [{ name: 'BR_LAMP' }, { name: 'BR LAMP' }],
                     optionalServices: [0xFFB0]
                 });
                 const server = await device.gatt.connect();
@@ -83,7 +59,6 @@
                 
                 connectBtn.innerText = "🟢 연결 완료";
                 connectBtn.classList.add('connected');
-                addPresetBtn.disabled = false;
             } catch (error) {
                 console.error(error);
                 if (error.name !== 'NotFoundError') {
@@ -92,7 +67,7 @@
             }
         });
 
-        // 2. 패킷 송신 함수 (G, B, R 검증 완료 순서 반영)
+        // 2. 패킷 송신 함수 (G, B, R 고정 배열)
         async function sendColor(rawHex) {
             if (!characteristic) return;
 
@@ -103,19 +78,17 @@
             const g = parseInt(hex.substring(2, 4), 16);
             const b = parseInt(hex.substring(4, 6), 16);
             
-            // 💡 아까 찾아낸 최적의 GBR 매핑 배열 순서로 전달
             const packet = new Uint8Array([g, b, r]);
 
             try {
                 await characteristic.writeValue(packet);
-                selectedColor = rawHex; // 전송 성공 시 현재 선택된 색상 업데이트
                 updateActiveButton(rawHex);
             } catch (e) {
                 console.error('전송 실패:', e);
             }
         }
 
-        // 3. 기본 색상 버튼 클릭 이벤트 바인딩
+        // 3. 버튼 클릭 시 색상 즉시 변경
         colorButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const hex = btn.getAttribute('data-hex');
@@ -123,7 +96,7 @@
             });
         });
 
-        // 활성화된 버튼 테두리 표시 보정
+        // 현재 선택된 버튼 테두리 강조 효과
         function updateActiveButton(hex) {
             colorButtons.forEach(btn => {
                 if(btn.getAttribute('data-hex') === hex) {
@@ -131,48 +104,6 @@
                 } else {
                     btn.classList.remove('active');
                 }
-            });
-        }
-
-        // 4. 내 목록에 추가 로직
-        addPresetBtn.addEventListener('click', () => {
-            if (selectedColor === "#000000") {
-                alert("끄기 버튼 상태는 저장할 수 없습니다!");
-                return;
-            }
-            if (!savedColors.includes(selectedColor)) {
-                savedColors.push(selectedColor);
-                localStorage.setItem('myMoodColors', JSON.stringify(savedColors));
-                renderPresets();
-            }
-        });
-
-        // 5. 저장된 프리셋 UI 렌더링
-        function renderPresets() {
-            presetContainer.innerHTML = '';
-            savedColors.forEach((hex, index) => {
-                const item = document.createElement('div');
-                item.className = 'preset-item';
-                item.style.backgroundColor = hex;
-
-                // 프리셋 칩 터치 시 즉시 무드등 색 변환
-                item.addEventListener('click', () => {
-                    sendColor(hex);
-                });
-
-                // X 삭제 버튼
-                const delBtn = document.createElement('div');
-                delBtn.className = 'delete-btn';
-                delBtn.innerText = 'X';
-                delBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // 프리셋 클릭 이벤트 버블링 방지
-                    savedColors.splice(index, 1);
-                    localStorage.setItem('myMoodColors', JSON.stringify(savedColors));
-                    renderPresets();
-                });
-
-                item.appendChild(delBtn);
-                presetContainer.appendChild(item);
             });
         }
     </script>
