@@ -1,8 +1,10 @@
-const CACHE_NAME = "moodlight-v1";
+const CACHE_NAME = "moodlight-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
   "./icons/icon.svg",
 ];
 
