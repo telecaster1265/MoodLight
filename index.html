@@ -3,12 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
     <title>배라 무드등 리모컨 v3 (Minimal)</title>
     <style>
       body {
         text-align: center;
         font-family: sans-serif;
-        padding: 20px 10px;
+        padding: max(20px, env(safe-area-inset-top))
+          max(10px, env(safe-area-inset-right))
+          max(20px, env(safe-area-inset-bottom))
+          max(10px, env(safe-area-inset-left));
         background: #1a1a1a;
         color: #fff;
       }
@@ -54,6 +64,14 @@
         box-shadow: 0 3px 6px rgba(40, 167, 69, 0.3);
       }
 
+      #installBtn {
+        display: none;
+        width: 100%;
+        margin: 0;
+        background: #ff79c6;
+        color: #1a1a1a;
+      }
+
       .color-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -83,6 +101,7 @@
     <div class="card">
       <h2>💡 라이언 무드등 제어</h2>
       <button id="connectBtn">블루투스 연결하기</button>
+      <button id="installBtn">📲 홈 화면에 설치하기</button>
     </div>
 
     <div class="card">
@@ -147,10 +166,43 @@
 
     <script>
       let characteristic = null;
+      let deferredInstallPrompt = null;
       const connectBtn = document.getElementById("connectBtn");
+      const installBtn = document.getElementById("installBtn");
       const colorButtons = document.querySelectorAll(
         '.color-grid .color-btn, [data-hex="#000000"]',
       );
+
+      // 설치 가능한 브라우저에서만 설치 버튼을 표시한다.
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installBtn.style.display = "block";
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (!deferredInstallPrompt) return;
+
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === "accepted") {
+          installBtn.style.display = "none";
+        }
+        deferredInstallPrompt = null;
+      });
+
+      window.addEventListener("appinstalled", () => {
+        installBtn.style.display = "none";
+        deferredInstallPrompt = null;
+      });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch((error) => {
+            console.error("서비스 워커 등록 실패:", error);
+          });
+        });
+      }
 
       // 1. BLE 연결 (필터 해제 무적 버전)
       connectBtn.addEventListener("click", async () => {

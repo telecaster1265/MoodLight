@@ -1,0 +1,18 @@
+{
+  "name": "배라 무드등 리모컨",
+  "short_name": "무드등 리모컨",
+  "description": "블루투스로 라이언 무드등을 제어하는 리모컨",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
