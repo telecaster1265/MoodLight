@@ -64,14 +64,6 @@
         box-shadow: 0 3px 6px rgba(40, 167, 69, 0.3);
       }
 
-      #installBtn {
-        display: none;
-        width: 100%;
-        margin: 0;
-        background: #ff79c6;
-        color: #1a1a1a;
-      }
-
       .color-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -101,7 +93,6 @@
     <div class="card">
       <h2>💡 라이언 무드등 제어</h2>
       <button id="connectBtn">블루투스 연결하기</button>
-      <button id="installBtn">📲 홈 화면에 설치하기</button>
     </div>
 
     <div class="card">
@@ -166,35 +157,10 @@
 
     <script>
       let characteristic = null;
-      let deferredInstallPrompt = null;
       const connectBtn = document.getElementById("connectBtn");
-      const installBtn = document.getElementById("installBtn");
       const colorButtons = document.querySelectorAll(
         '.color-grid .color-btn, [data-hex="#000000"]',
       );
-
-      // 설치 가능한 브라우저에서만 설치 버튼을 표시한다.
-      window.addEventListener("beforeinstallprompt", (event) => {
-        event.preventDefault();
-        deferredInstallPrompt = event;
-        installBtn.style.display = "block";
-      });
-
-      installBtn.addEventListener("click", async () => {
-        if (!deferredInstallPrompt) return;
-
-        deferredInstallPrompt.prompt();
-        const { outcome } = await deferredInstallPrompt.userChoice;
-        if (outcome === "accepted") {
-          installBtn.style.display = "none";
-        }
-        deferredInstallPrompt = null;
-      });
-
-      window.addEventListener("appinstalled", () => {
-        installBtn.style.display = "none";
-        deferredInstallPrompt = null;
-      });
 
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
